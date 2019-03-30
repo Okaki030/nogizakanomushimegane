@@ -1,0 +1,1 @@
+select time,replace(time,'14','10') from ar_tbl where day='14';

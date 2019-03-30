@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="utf-8">
+        <title>乃木坂のむしめがね</title>
+        <link rel="stylesheet" href="../../static/css/stylesheet.css?201610261200">
+        <link rel="shortcut icon" href="../../static/image/favicon.ico">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="../../static/css/jqcloud.css" />
+        <script type="text/javascript" src="../../static/js/jqcloud-1.0.4.js"></script>
+        <script type="text/javascript">
+           var word_list = [
+               {%  for word_count in word_count_list %}
+                   { text: '{{ word_count[0] }}', weight: {{ word_count[1] }} ,link: '/word/{{ word_count[0] }}/1' },
+               {% endfor %}
+        ];
+
+        $(function(){
+          //. 上記で用意した配列をタグクラウドとして表示
+          $("#tagcloud").jQCloud( word_list, {
+            width: 840, height: 600
+          });
+          $("#tagcloud-detail").jQCloud( word_list, {
+            width: 840, height: 400
+          });
+        });
+        </script>
+    </head>
+    <body style="zoom:80%">
+        <div class="header">
+            <a href="/"><img src="../../static/image/title.JPG" width="500"></a>
+        </div>
+        <h1>{{ name }}に関する記事</h1>
+        <div class="popular-word-wrapper-detail">
+            <div class="popular-member-cloud">
+                <!-- ここにタグクラウドを表示する -->
+                <div id="tagcloud-detail"></div>
+            </div>
+            <div class="popular-text-detail">
+                <h3>注目ワード</h3>
+                <table class="ranking_tbl">
+                {% for word_count_rank in word_count_rank_list %}
+                    <tr>
+                        <td class="ranking">{{ word_count_rank[0] }}位</td>
+                        <td class="member">
+                            <a href="/word/{{ word_count_rank[1] }}/1">{{ word_count_rank[1] }}</a>
+                        </td>
+                        <td class="point">{{ word_count_rank[2] }}pt</td>
+                    </tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
+        <div class="news-list">
+            <table class="t-line" width="1200">
+                <thead>
+                    <tr class="news-graph">
+                        <td class="news-date-detail">日付</td>
+                        <td class="news-time-detail">時間</td>
+                        <td class="news-title-detail">タイトル</td>
+                        <td class="news-site-detail">配信元</td>
+                    </tr>
+                </thead>
+                {% for ar in ar_list %}
+                <tr class="news-graph">
+                    <td class="news-date-detail">{{ ar[6] }}月{{ ar[7] }}日</td>
+                    {% if ar[1]<10 and ar[2]<10 %}
+                        <td class="news-time-detail">0{{ ar[1] }}:0{{ ar[2] }}</td>
+                    {% elif ar[1]<10 %}
+                        <td class="news-time-detail">0{{ ar[1] }}:{{ ar[2] }}</td>
+                    {% elif ar[2]<10 %}
+                        <td class="news-time-detail">{{ ar[1] }}:0{{ ar[2] }}</td>
+                    {% else %}
+                        <td class="news-time-detail">{{ ar[1] }}:{{ ar[2] }}</td>
+                    {% endif %}
+                    <td class="news-title-detail"><a href="{{ ar[3] }}" target="_blank">{{ ar[0] }}</a></td>
+                    <td class="news-site-detail"><a href="{{ ar[5] }}" target="_blank">{{ ar[4] }}</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        </div>
+        <div class="pagination"style="zoom:120%">
+            <ul class="pageNav01">
+                {% if page_count<=5 %}
+                    {% if page!=1 %}
+                        <li><a href="/{{ cate }}/{{ name }}/{{ page_prev }}">&laquo; 前</a></li>
+                    {% endif %}
+                    {% for page_number in range(1,page_count+1) %}
+                        {% if page_number==page %}
+                            <li><span>{{ page }}</span></li>
+                        {% else %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_number }}">{{ page_number }}</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page!=page_count %}
+                        <li><a href="/{{ cate }}/{{ name }}/{{ page_next }}">次 &raquo;</a></li>
+                    {% endif %}
+                {% else %}
+                    {% if page<=2 %}
+                        {% if page!=1 %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_prev }}">&laquo; 前</a></li>
+                        {% endif %}
+                        {% for page_number in range(1,6) %}
+                            {% if page_number==page %}
+                                <li><span>{{ page }}</span></li>
+                            {% else %}
+                                <li><a href="/{{ cate }}/{{ name }}/{{ page_number }}">{{ page_number }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li><span>...</span></li>
+                        <li><a href="/{{ cate }}/{{ name }}/{{ page_count-1 }}">{{ page_count-1 }}</a></li>
+                        {% if page!=page_count %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_next }}">次 &raquo;</a></li>
+                        {% endif %}
+                    {% elif page>=page_count-2 %}
+                        {% if page!=1 %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_prev }}">&laquo; 前</a></li>
+                        {% endif %}
+                        <li><a href="/{{ cate }}/{{ name }}/{{ 1 }}">{{ 1 }}</a></li>
+                        <li><span>...</span></li>
+                        {% for page_number in range(page_count-5,page_count) %}
+                            {% if page_number==page %}
+                                <li><span>{{ page }}</span></li>
+                            {% else %}
+                                <li><a href="/{{ cate }}/{{ name }}/{{ page_number }}">{{ page_number }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        {% if page!=page_count-1 %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_next }}">次 &raquo;</a></li>
+                        {% endif %}
+                    {% else %}
+                        {% if page!=1 %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_prev }}">&laquo; 前</a></li>
+                        {% endif %}
+                        <li><a href="/{{ cate }}/{{ name }}/{{ 1 }}">{{ 1 }}</a></li>
+                        <li><span>...</span></li>
+                        {% for page_number in range(page-2,page+3) %}
+                            {% if page_number==page %}
+                                <li><span>{{ page }}</span></li>
+                            {% else %}
+                                <li><a href="/{{ cate }}/{{ name }}/{{ page_number }}">{{ page_number }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                        <li><span>...</span></li>
+                        <li><a href="/{{ cate }}/{{ name }}/{{ page_count-1 }}">{{ page_count-1 }}</a></li>
+                        {% if page!=page_count %}
+                            <li><a href="/{{ cate }}/{{ name }}/{{ page_next }}">次 &raquo;</a></li>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+        <div class="footer">
+        乃木坂のむしめがねについては<a href="/about">こちら</a><br>
+        Copyright © 2019 Hikita All Rights Reserved.
+        </div>
+        <script src="../../static/js/script.js"></script>
+    </body>
+</html>
